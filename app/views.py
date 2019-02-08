@@ -1,5 +1,8 @@
 from flask import Flask, render_template, url_for
 from app import app
+from forms import RegistrationForm, LoginForm
+
+app.config['SECRET_KEY']
 
 posts = [
     {
@@ -33,4 +36,14 @@ def home():
     '''
     title = 'Home'
     return render_template('home.html', title=title, posts=posts)    
+
+@app.route('/register')
+def register():
+
+    '''
+    View root page function that returns the index page and its data
+    '''
+    title = 'Register'
+    form = RegistrationForm()
+    return render_template('register.html', title=title, form=form)    
 
