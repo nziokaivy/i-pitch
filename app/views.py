@@ -1,7 +1,6 @@
 from flask import render_template
 from app import app
 
-# Views
 @app.route('/')
 def index():
 
@@ -9,3 +8,12 @@ def index():
     View root page function that returns the index page and its data
     '''
     return render_template('index.html')
+
+@app.route('/home')
+def home():
+
+    '''
+    View root page function that returns the index page and its data
+    '''
+    return render_template('home.html')    
+
