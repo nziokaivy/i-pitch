@@ -52,14 +52,20 @@ def register():
         return redirect(url_for('home'))
     return render_template('register.html', title=title, form=form)    
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
 
     '''
     View root page function that returns the index page and its data
     '''
     title = 'Login'
-    form = LoginForm()
+   form = LoginForm()
+    if form.validate_on_submit():
+        if form.email.data == 'admin@blog.com' and form.password.data == 'password':
+            flash('You have been logged in!', 'success')
+        else:
+            flash('Login unsuccessful.Please check username and password!', 'danger')    
+        return redirect(url_for('home'))
     return render_template('login.html', title=title, form=form)
 
 if __name__ == '__main__':
