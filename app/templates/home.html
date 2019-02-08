@@ -1,5 +1,22 @@
 {% extends "layout.html" %}
 {% block content %}
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="/">i-Pitch</a>
+          </div>
+          <ul class="nav navbar-nav">
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            <li><a href="{{ url_for('register') }}">Register</a></li>
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+          </ul>
+        </div>
+      </nav>
+      <br>
+      <br>
+      <br>
    
     {% for post in posts %}
     <div class="card">
