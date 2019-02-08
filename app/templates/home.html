@@ -1,17 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="/">i-Pitch</a>
-          </div>
-          <ul class="nav navbar-nav">
-            <li><a href="{{ url_for('home') }}">Home</a></li>
-            <li><a href="{{ url_for('about') }}">About</a></li>
-            <li><a href="{{ url_for('register') }}">Register</a></li>
-            <li><a href="{{ url_for('login') }}">Login</a></li>
-          </ul>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+          <a class="navbar-brand" href="/">I-pitch</a>
+          <a class="navbar-brand" href="/home">Home</a>
+          <a class="navbar-brand" href="/register">Register</a>
+          <a class="navbar-brand" href="/login">Login</a>
         </div>
       </nav>
       <br>
