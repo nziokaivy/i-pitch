@@ -47,3 +47,12 @@ def register():
     form = RegistrationForm()
     return render_template('register.html', title=title, form=form)    
 
+@app.route('/login')
+def login():
+
+    '''
+    View root page function that returns the index page and its data
+    '''
+    title = 'Login'
+    form = LoginForm()
+    return render_template('login.html', title=title, form=form)    
