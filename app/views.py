@@ -5,13 +5,13 @@ posts = [
     {
         'author' : 'Ivy Mwende',
         'title' : 'Pitch 1 content',
-        'content' : 'Beautiful day in Kenya,
+        'content' : 'Beautiful day in Kenya',
         'date_posted' : 'April 20, 2018'
     },
     {
         'author' : 'John Doe',
         'title' : 'Pitch 2 content',
-        'content' : 'Beautiful day in Uganda,
+        'content' : 'Beautiful day in Uganda',
         'date_posted' : 'April 21, 2018'
 
     }
