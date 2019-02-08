@@ -1,8 +1,10 @@
 from flask import Flask, render_template, url_for
-from app import app
+
 from forms import RegistrationForm, LoginForm
 
-app.config['SECRET_KEY']
+app = Flask(__name__)
+app.config['SECRET_KEY'] = '21ad0163f7774319409a266fcca95b16'
+
 
 posts = [
     {
@@ -55,4 +57,7 @@ def login():
     '''
     title = 'Login'
     form = LoginForm()
-    return render_template('login.html', title=title, form=form)    
+    return render_template('login.html', title=title, form=form)
+
+if __name__ == '__main__':
+    app.run(debug=True)
