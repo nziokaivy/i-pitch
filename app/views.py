@@ -1,17 +1,7 @@
-from datetime import datetime
-from flask import Flask, render_template, url_for, flash, redirect
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-
-from forms import RegistrationForm, LoginForm
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = '21ad0163f7774319409a266fcca95b16'
-app.config['SQLACHEMY_DATABASE_URI'] = 'sqlite:///site.db '
-
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-
+from flask import render_template, url_for, flash, redirect
+from app import app
+from app.forms import RegistrationForm, LoginForm
+from app.models import User, Post
 
 
 posts = [
@@ -76,5 +66,3 @@ def login():
         return redirect(url_for('home'))
     return render_template('login.html', title=title, form=form)
 
-if __name__ == '__main__':
-    app.run(debug=True)
