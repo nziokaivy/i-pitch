@@ -1,4 +1,4 @@
-from flask import render_template, url_for, flash, redirect
+from flask import render_template, url_for, flash, redirect, request
 from app import app, db
 from app.forms import RegistrationForm, LoginForm
 from app.models import User, Post
@@ -69,9 +69,10 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user and pass_secure.check_password_hash(user.password, form.password.data)
+        if user and user.password:
             login_user(user, remember=form.remember.data)
-            return redirect(url_for('home'))
+            next_page = requests.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('home'))
         else:    
             flash('Login unsuccessful.Please check email and password!', 'danger')    
         return redirect(url_for('home'))
