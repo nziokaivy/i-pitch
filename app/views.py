@@ -2,7 +2,7 @@ from flask import render_template, url_for, flash, redirect
 from app import app, db
 from app.forms import RegistrationForm, LoginForm
 from app.models import User, Post
-from flask_login import login_user
+from flask_login import login_user, current_user, logout_user
 
 
 posts = [
@@ -44,6 +44,8 @@ def register():
     '''
     View root page function that returns the index page and its data
     '''
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     title = 'Register'
     form = RegistrationForm()
     if form.validate_on_submit():
@@ -61,6 +63,8 @@ def login():
     '''
     View root page function that returns the index page and its data
     '''
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     title = 'Login'
     form = LoginForm()
     if form.validate_on_submit():
@@ -73,3 +77,8 @@ def login():
         return redirect(url_for('home'))
     return render_template('login.html', title=title, form=form)
 
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(ulr_for('home'))
