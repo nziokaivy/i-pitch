@@ -39,12 +39,12 @@
       <div class="card-header">
         <h2>{{ post.title }}</h2>
         <img class="rounded-circle" src="{{ url_for('static', filename='profile_pictures/' + post.author.image_file) }}">
-
+        <a class="mr-2" href="{{ url_for('user_posts, username=post.author.username) }}" class="card-text">By {{ post.author.username }} on {{post.date_posted.strftime('%Y-%m-%d') }}</a>
+     
       </div>
       <div class="card-body">
         <h4 class="card-title">{{ post.content }}</h4>  
-        <small class="card-text">By {{ post.author.username }} on {{post.date_posted.strftime('%Y-%m-%d') }}</small>
-      </div>
+        </div>
     </div>
     {% endfor %}
     {% for page_num in post.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}

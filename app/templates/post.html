@@ -5,11 +5,11 @@
       <div class="card-header">
         <h2><a href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
         <img class="rounded-circle" src="{{ url_for('static', filename='profile_pictures/' + post.author.image_file) }}">
-
+        <a class="mr-2" href="{{ url_for('user_posts, username=post.author.username) }}" class="card-text">By {{ post.author.username }} on {{post.date_posted.strftime('%Y-%m-%d') }}</a>
+     
       </div>
       <div class="card-body">
         <h4 class="card-title">{{ post.content }}</h4>  
-        <small class="card-text">By {{ post.author.username }} on {{post.date_posted.strftime('%Y-%m-%d') }}</small>
         {% if post.author == current_user %}
            <div>
                <a class="btn btn-secondary btn-sm m-1" href="{{ url_for('update_post', post_id=post.id)}}">Update</a>
