@@ -1,5 +1,5 @@
 from app import app,db
-from app.models import User
+from app.models import User, Post
 from flask_sqlalchemy import SQLAlchemy
 
 @app.shell_context_processor
@@ -10,4 +10,4 @@ def make_shell_context():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
