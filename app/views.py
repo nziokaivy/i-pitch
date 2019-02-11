@@ -121,10 +121,13 @@ def account():
     
     return render_template('account.html', title='Account', image_file=image_file, form=form)
 
-@app.route('/post/new')
+@app.route('/post/new', methods=['GET', 'POST'])
 @login_required
 def new_post(): 
     form = PostForm()
+    if form.validate_on_submit():
+        flash('Your post has been created!', 'success')
+        return redirect(url_for('home'))
 
     return render_template('create_post.html', title='New Post', form=form)
 
