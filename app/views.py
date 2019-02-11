@@ -22,7 +22,8 @@ def home():
     '''
     View root page function that returns the index page and its data
     '''
-    posts = Post.query.paginate(per_page=5)
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
     title = 'Home'
     return render_template('home.html', title=title, posts=posts)    
 
@@ -152,3 +153,13 @@ def delete_post(post_id):
     db.session.commit()    
     flash('Your post has been deleted')
     return redirect(url_for('home'))
+
+@app.route('/user/<str:username>')
+def user_posts(username):
+    page = request.args.get('page', 1, type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = Post.query.filter_by(author=user)\
+        .order_by(Post.date_posted.desc())\
+        .paginate(page=page, per_page=5)
+    title = 'User'
+    return render_template('user_post.html', title=title, posts=posts, user=user)    
