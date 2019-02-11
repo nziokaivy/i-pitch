@@ -7,6 +7,7 @@ from app.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, 
 from app.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
+from .email import mail_message
 
 @app.route('/')
 def index():
@@ -41,11 +42,11 @@ def register():
         user = User( username=form.username.data, email=form.email.data, password=form.password.data)
         db.session.add(user)
         db.session.commit()
-
+        mail_message("Welcome to i-pitch","email/welcome_user",user.email,user=user)
         flash(f'Account created for {form.username.data}! You are now able to log in', 'success')
+        
         return redirect(url_for('login'))
-    return render_template('register.html', title=title, form=form)    
-
+    return render_template('register.html', title=titl'New Account'
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 
