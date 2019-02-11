@@ -22,7 +22,14 @@ def get_reset_token(self, expires_sec=1800):
     return s.dumps({'user_id' : self.id}).decode('utf-8')
 
 def verify_reset_token(token):
-    s = Serializer(app.config['SECRET_KEY'])    
+    s = Serializer(app.config['SECRET_KEY'])
+    try:
+        user_id = s.loads(token)['user_id']  
+    except:
+        return None
+    return User.query.get(user_id)    
+
+    return User.query.get()      
     @property
     def password(self):
         raise AttributeError('You cannot read the password attribute')
