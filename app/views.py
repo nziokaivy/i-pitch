@@ -3,7 +3,7 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request
 from app import app, db
-from app.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from app.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 from app.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -124,6 +124,7 @@ def account():
 @app.route('/post/new')
 @login_required
 def new_post(): 
+    form = PostForm()
 
-    return render_template('create_post.html', title='New Post')
+    return render_template('create_post.html', title='New Post', form=form)
 
