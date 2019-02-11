@@ -22,7 +22,7 @@ def home():
     '''
     View root page function that returns the index page and its data
     '''
-    posts = Post.query.all()
+    posts = Post.query.paginate(per_page=5)
     title = 'Home'
     return render_template('home.html', title=title, posts=posts)    
 
@@ -150,3 +150,5 @@ def delete_post(post_id):
         abort(403)   
     db.session.delete()
     db.session.commit()    
+    flash('Your post has been deleted')
+    return redirect(url_for('home'))
