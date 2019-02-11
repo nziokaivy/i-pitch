@@ -1,37 +1,41 @@
 import os
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, ForeignKey
-from sqlalchemy import Column, Date, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, backref
-from flask_login import LoginManager
+from flask_bootstrap import Bootstrap
 from config import config_options
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 from flask_mail import Mail
 
-engine = create_engine('sqlite:///site.db', echo=True)
-Base = declarative_base()
-import os
 
+bootstrap = Bootstrap()
+db = SQLAlchemy()
+mail = Mail()
 
-# def create_app(config_name):
-
-app = Flask(__name__)
-
-# app.config.from_object(config_options[config_name])
-
-SQLALCHEMY_TRACK_MODIFICATIONS = False
-db = SQLAlchemy(app)
-login_manager =LoginManager(app)
-login_manager.login_view = 'login'
+login_manager =LoginManager()
+login_manager.session_protection = 'strong'
+login_manager.login_view = 'auth.login'
 login_manager.login_message_category = 'info'
-app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
-app.config['MAIL_PORT'] = 587
-app.['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
-app.config['MAIL_PASSWORD'] =  os.environ.get('EMAIL_USER')
-mail = Mail(app)
 
-Base.metadata.create_all(engine)
+db = SQLAlchemy()
+login_manager = LoginManager()
+login_manager.login_view = 'users.login'
+login_manager.login_message_category = 'info'
+mail = Mail()
 
-from app import views
+def create_app(config_name):
+
+    app = Flask(__name__)
+    app.config.from_object(config_options[config_name])
+
+    db.init_app(app)
+    bootstrap.init_app(app)
+    login_manager.init_app(app)
+    mail.init_app(app)
+
+    from .main import main as main_blueprint
+    app.register_blueprint(main_blueprint)
+
+    from .auth import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint, url_prefix='/authenticate')
+
+    return app

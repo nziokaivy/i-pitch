@@ -2,22 +2,24 @@ import os
 import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
-from app import app, db, mail
-from app.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, RequestResetForm, ResetPasswordForm
-from app.models import User, Post
+from . import main
+from .. import db, mail
+from .forms import UpdateAccountForm, PostForm, RequestResetForm, ResetPasswordForm
+from ..models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
-from .email import mail_message
+# from .email import mail_message
 
-@app.route('/')
+@main.route('/')
 def index():
 
     '''
     View root page function that returns the index page and its data
     '''
-    return render_template('index.html')
+    title='Home'
+    return render_template('index.html', title=title)
 
-@app.route('/home')
+@main.route('/home')
 def home():
 
     '''
@@ -28,7 +30,7 @@ def home():
     title = 'Home'
     return render_template('home.html', title=title, posts=posts)    
 
-@app.route('/register', methods=['GET', 'POST'])
+@main.route('/register', methods=['GET', 'POST'])
 def register():
 
     '''
@@ -46,8 +48,9 @@ def register():
         flash(f'Account created for {form.username.data}! You are now able to log in', 'success')
         
         return redirect(url_for('login'))
-    return render_template('register.html', title=titl'New Account'
-@app.route('/login', methods=['GET', 'POST'])
+    return render_template('register.html', title='New Account')
+
+@main.route('/login', methods=['GET', 'POST'])
 def login():
 
     '''
@@ -69,7 +72,7 @@ def login():
     return render_template('login.html', title=title, form=form)
 
 
-@app.route('/logout')
+@main.route('/logout')
 def logout():
     logout_user()
     return redirect(ulr_for('home'))
@@ -87,7 +90,7 @@ def save_picture(form_picture):
     return picture_fn
 
 
-@app.route('/account', methods=['GET', 'POST'])
+@main.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
     form = UpdateAccountForm()
@@ -108,7 +111,7 @@ def account():
     
     return render_template('account.html', title='Account', image_file=image_file, form=form)
 
-@app.route('/post/new', methods=['GET', 'POST'])
+@main.route('/post/new', methods=['GET', 'POST'])
 @login_required
 def new_post(): 
     form = PostForm()
@@ -121,12 +124,12 @@ def new_post():
 
     return render_template('create_post.html', title='New Post', form=form, legend="New Post")
 
-@app.route('/post/<int:post_id>')
+@main.route('/post/<int:post_id>')
 def post(post_id):
     post = Post.query.get_or_404(post_id)
     return render_template('post.html', title=post.title, post=post)
 
-@app.route('/post/<int:post_id>/update', methods=['GET', 'POST'])
+@main.route('/post/<int:post_id>/update', methods=['GET', 'POST'])
 @login_required
 def update_post(post_id):
     post = Post.query.get_or_404(post_id)
@@ -144,7 +147,7 @@ def update_post(post_id):
         form.content.data = post.content
     return render_template('create_post.html', title='Update Post', form=form, legend="Update Post")
 
-@app.route('/post/<int:post_id>/delete', methods=['POST'])
+@main.route('/post/<int:post_id>/delete', methods=['POST'])
 @login_required    
 def delete_post(post_id):
     post = Post.query.get_or_404(post_id)
@@ -155,7 +158,7 @@ def delete_post(post_id):
     flash('Your post has been deleted')
     return redirect(url_for('home'))
 
-@app.route('/user/<string:username>')
+@main.route('/user/<string:username>')
 def user_posts(username):
     page = request.args.get('page', 1, type=int)
     user = User.query.filter_by(username=username).first_or_404()
@@ -172,7 +175,8 @@ def send_reset_email(user):
     To reset your password, visit the following link: {url_for('rest_token', token=token, _external=True)}
     '''
     mail.send(msg)
-@app.route('/reset_password', methods=['GET', 'POST'])
+
+@main.route('/reset_password', methods=['GET', 'POST'])
 def reset_request():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -184,7 +188,7 @@ def reset_request():
             return redirect(url_for('login'))
         return render_template('reset_request.html', title='Reset Password', form=form)
 
-@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+@main.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_token(token):
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -201,3 +205,30 @@ def reset_token(token):
             return redirect(url_for('login'))
    
     return render_template('reset_token.html', title='Reset Password', form=form)    
+
+
+@main.route('/post/<post_id>/add/comment', methods = ['GET','POST'])
+@login_required
+def comment(uname,post_id):
+    user = User.query.filter_by(username = uname).first()
+    post = Post.query.filter_by(id = post_id).first()
+    form = CommentForm()
+
+    if form.validate_on_submit():
+        body = form.comment.data
+        name = form.name.data
+        new_comment = Comment(body=body)
+        new_comment.save_comment()
+        
+        return redirect(url_for("main.show_comments",id = id))
+    return render_template("comment.html", form = form, post = post)
+
+@main.route('/<post_id>/comments')
+@login_required
+def show_comments(post_id):
+    
+    comments = None
+    post = Post.query.filter_by(id = post_id).first()
+    comments = post.get_post_comments()
+
+    return render_template('show_comments.html',comments= comments,post= post)

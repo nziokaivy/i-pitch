@@ -1,10 +1,19 @@
 import os
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'c2ef723c5c795661596125cc1a8e2fb2'
+    """Main configurations class"""
 
     SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
-
+    SECRET_KEY = os.environ.get("SECRET_KEY")
+    UPLOADED_PHOTOS_DEST = 'app/static/profile pictures'
+    MAIL_SERVER = 'smtp.mail.yahoo.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
+    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
+    SUBJECT_PREFIX = 'PITCH'
+    SENDER_EMAIL = 'nziokaivy@gmail.com'
+    
 class ProdConfig(Config):
     
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")    

@@ -1,6 +1,7 @@
 from datetime import datetime
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from app import db, login_manager, app
+from flask import current_app
+from . import db, login_manager
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash,check_password_hash
 
@@ -17,11 +18,12 @@ class User(db.Model, UserMixin):
     posts = db.relationship('Post', backref='author', lazy=True)
     pass_secure = db.Column(db.String(255), nullable=False)
     
-@staticmethod
+
 def get_reset_token(self, expires_sec=1800):
     s = Serializer(app.config['SECRET_KEY'], expires_sec)
     return s.dumps({'user_id' : self.id}).decode('utf-8')
 
+@staticmethod
 def verify_reset_token(token):
     s = Serializer(app.config['SECRET_KEY'])
     try:
@@ -57,6 +59,20 @@ class Post(db.Model):
 
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
+
+class Comment(db.Model):
+     
+    id = db.Column(db.Integer, primary_key = True)
+    body = db.column(db.Text)
+    author = db.column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    post_id = db.Column(db.Integer, db.ForeignKey("posts.id"))
+
+
+    def save_comment(self):
+        db.session.add(self)
+        db.session.commit()   
+        
 
 if __name__ == '__main__':
     init_db()
