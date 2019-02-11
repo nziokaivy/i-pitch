@@ -221,7 +221,7 @@ def comment(uname,post_id):
         new_comment.save_comment()
         
         return redirect(url_for("main.show_comments",id = id))
-    return render_template("comment.html", form = form, post = post)
+    return render_template("comments.html", form = form, post = post)
 
 @main.route('/<post_id>/comments')
 @login_required
@@ -232,3 +232,16 @@ def show_comments(post_id):
     comments = post.get_post_comments()
 
     return render_template('show_comments.html',comments= comments,post= post)
+
+
+@main.route('/post/<category>')
+def post(category):
+    
+    posts= None
+    if category == 'all':
+        posts = Post.query.order_by(Post.date.desc())
+    else :
+        posts = Post.query.filter_by(category = category).order_by(Post.date.desc()).all()
+
+    return render_template('post.html', posts = posts ,title = category.upper())
+
