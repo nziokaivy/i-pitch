@@ -4,17 +4,19 @@ from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Date, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
- 
+from flask_login import LoginManager
+from config import config_options
 
 engine = create_engine('sqlite:///site.db', echo=True)
 Base = declarative_base()
 import os
-from flask_login import LoginManager
 
+
+# def create_app(config_name):
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'c2ef723c5c795661596125cc1a8e2fb2'
-app.config['SQLACHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+
+# app.config.from_object(config_options[config_name])
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 db = SQLAlchemy(app)
