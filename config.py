@@ -3,7 +3,8 @@ import os
 class Config:
     """Main configurations class"""
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
+    # SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://ivy:Kenya2030@localhost/ipitch'
     SECRET_KEY = os.environ.get("SECRET_KEY")
     UPLOADED_PHOTOS_DEST = 'app/static/profile pictures'
     MAIL_SERVER = 'smtp.mail.yahoo.com'
@@ -15,9 +16,9 @@ class Config:
     SENDER_EMAIL = 'nziokaivy@gmail.com'
     
 class ProdConfig(Config):
+    pass
     
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")    
-    
+        
 class DevConfig(Config):
     """Configuration class for development stage of the app"""
     DEBUG = True

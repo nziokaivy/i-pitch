@@ -16,8 +16,8 @@ def index():
     '''
     View root page function that returns the index page and its data
     '''
-    title='Home'
-    return render_template('index.html', title=title)
+   
+    return render_template('index.html')
 
 @main.route('/home')
 def home():
@@ -25,57 +25,12 @@ def home():
     '''
     View root page function that returns the index page and its data
     '''
-    page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
+    posts = None
+    # page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.date_posted.desc())
     title = 'Home'
     return render_template('home.html', title=title, posts=posts)    
 
-@main.route('/register', methods=['GET', 'POST'])
-def register():
-
-    '''
-    View root page function that returns the index page and its data
-    '''
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-    title = 'Register'
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        user = User( username=form.username.data, email=form.email.data, password=form.password.data)
-        db.session.add(user)
-        db.session.commit()
-        mail_message("Welcome to i-pitch","email/welcome_user",user.email,user=user)
-        flash(f'Account created for {form.username.data}! You are now able to log in', 'success')
-        
-        return redirect(url_for('login'))
-    return render_template('register.html', title='New Account')
-
-@main.route('/login', methods=['GET', 'POST'])
-def login():
-
-    '''
-    View root page function that returns the index page and its data
-    '''
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-    title = 'Login'
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and user.password:
-            login_user(user, remember=form.remember.data)
-            next_page = requests.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('home'))
-        else:    
-            flash('Login unsuccessful.Please check email and password!', 'danger')    
-        return redirect(url_for('home'))
-    return render_template('login.html', title=title, form=form)
-
-
-@main.route('/logout')
-def logout():
-    logout_user()
-    return redirect(ulr_for('home'))
 
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
@@ -120,7 +75,7 @@ def new_post():
         db.session.add(post)
         db.session.commit()
         flash('Your post has been created!', 'success')
-        return redirect(url_for('home'))
+        return redirect(url_for('main.home'))
 
     return render_template('create_post.html', title='New Post', form=form, legend="New Post")
 
@@ -160,11 +115,8 @@ def delete_post(post_id):
 
 @main.route('/user/<string:username>')
 def user_posts(username):
-    page = request.args.get('page', 1, type=int)
     user = User.query.filter_by(username=username).first_or_404()
-    posts = Post.query.filter_by(author=user)\
-        .order_by(Post.date_posted.desc())\
-        .paginate(page=page, per_page=5)
+    posts = Post.query.filter_by(author=user)
     title = 'User'
     return render_template('user_posts.html', title=title, posts=posts, user=user)    
 
@@ -233,9 +185,8 @@ def show_comments(post_id):
 
     return render_template('show_comments.html',comments= comments,post= post)
 
-
 @main.route('/post/<category>')
-def post(category):
+def post_category(category):
     
     posts= None
     if category == 'all':
@@ -243,5 +194,26 @@ def post(category):
     else :
         posts = Post.query.filter_by(category = category).order_by(Post.date.desc()).all()
 
-    return render_template('post.html', posts = posts ,title = category.upper())
+    return render_template('home.html', posts = posts ,title = category.upper())
+
+@main.route('/pitch/new/<int:id>', methods=['GET', 'POST'])
+@login_required
+def new_comment(id):
+    '''
+    Function that returns a list of comments for the particular pitch
+    '''
+    form = CommentForm()
+    pitches = Pitches.query.filter_by(id=id).first()
+
+    if pitches is None:
+        abort(404)
+
+    if form.validate_on_submit():
+        comment_id = form.comment_id.data
+        new_comment = Comments(comment_id=comment_id,
+                               user_id=current_user.id, pitches_id=pitches.id)
+        new_comment.save_comment()
+        return redirect(url_for('main.post_category', id=pitches.category_id))
+
+    return render_template('comments.html', form=form)
 

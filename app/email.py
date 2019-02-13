@@ -2,10 +2,13 @@ from flask_mail import Message
 from flask import render_template
 from . import mail
 subject_pref = 'PITCH'
-sender_email = 'nziokaivy@gmail.com'
 
-def send_email(subject, sender, recipients, text_body, html_body):
-    msg = Message(subject, sender=sender, recipients=recipients)
-    msg.body = text_body
-    msg.html = html_body
-    mail.send(msg)
+
+
+
+def mail_message(subject,template,to,**kwargs):
+    sender_email = 'nziokaivy@gmail.com'
+    email = Message(subject, sender=sender_email, recipients=[to])
+    email.body= render_template(template + ".txt",**kwargs)
+    email.html = render_template(template + ".html",**kwargs)
+    mail.send(email)    
